@@ -13,4 +13,4 @@ class Complaint(Base):
     ad_id: Mapped[int] = mapped_column(ForeignKey('ads.id'))
 
     user: Mapped['User'] = relationship(back_populates='complaints')
-    ads: Mapped['Ad'] = relationship(back_populates='complaints')
+    ad: Mapped['Ad'] = relationship(back_populates='complaints')

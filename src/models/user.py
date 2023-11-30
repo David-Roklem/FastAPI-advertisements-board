@@ -21,14 +21,14 @@ class User(Base):
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
     ads: Mapped[list['Ad']] = relationship(
-        back_populates='user',
+        back_populates='user'
     )
     comments: Mapped[list['Comment']] = relationship(
-        back_populates='user',
+        back_populates='user'
     )
     complaints: Mapped[list['Complaint']] = relationship(
-        back_populates='user',
+        back_populates='user'
     )
     reviews: Mapped[list['Review']] = relationship(
-        back_populates='user',
+        back_populates='user'
     )
