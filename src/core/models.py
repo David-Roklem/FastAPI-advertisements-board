@@ -111,16 +111,16 @@ class Review(Base):
     ads: Mapped['Ad'] = relationship(back_populates='reviews')
 
 
-async def insert_data_user():
-    async with async_session_maker() as session:
-        example_insertion_user = User(
-            username='username',
-            email='email',
-            password_hash='password_hash'
-        )
+# async def insert_data_user():
+#     async with async_session_maker() as session:
+#         example_insertion_user = User(
+#             username='username',
+#             email='email',
+#             password_hash='password_hash'
+#         )
 
-        session.add(example_insertion_user)
-        await session.commit()
+#         session.add(example_insertion_user)
+#         await session.commit()
 
 
-asyncio.run(insert_data_user())
+# # asyncio.run(insert_data_user())
