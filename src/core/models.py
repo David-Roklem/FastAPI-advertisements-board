@@ -116,11 +116,12 @@ class Review(Base):
 #         example_insertion_user = User(
 #             username='username',
 #             email='email',
-#             password_hash='password_hash'
+#             password_hash='password_hash',
+#             is_admin=True
 #         )
 
 #         session.add(example_insertion_user)
 #         await session.commit()
 
 
-# # asyncio.run(insert_data_user())
+# asyncio.run(insert_data_user())
