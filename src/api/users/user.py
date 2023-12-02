@@ -8,7 +8,7 @@ from core.db import get_async_session
 router = APIRouter(prefix='/users', tags=['Users'])
 
 
-@router.post('/')
+@router.post('/sign-up')
 async def create_user(
     user: CreateUser, db: AsyncSession = Depends(get_async_session)
 ):
@@ -39,7 +39,7 @@ async def login(
     return {'message': 'You have been successfully logged in'}
 
 
-@router.patch('/')
+@router.patch('/appoint-admin/')
 async def appoint_admin(
     admin: str,
     username: str,
