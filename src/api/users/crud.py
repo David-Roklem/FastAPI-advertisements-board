@@ -1,4 +1,6 @@
-from sqlalchemy import select
+from fastapi import HTTPException, status
+
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.hash_password import get_password_hash, verify_password
 
@@ -7,15 +9,13 @@ from core import models
 
 
 async def get_user_by_username(db: AsyncSession, username: str):
-    result = await db.execute(
-        select(models.User).filter(models.User.username == username)
-    )
+    stmt = select(models.User).filter(models.User.username == username)
+    result = await db.execute(stmt)
     return result.scalars().first()
 
 
 async def create_user(db: AsyncSession, user: CreateUser):
     hashed_password = get_password_hash(user.password)
-    print(hashed_password)
     db_user = models.User(
         username=user.username,
         email=user.email,
@@ -29,9 +29,35 @@ async def create_user(db: AsyncSession, user: CreateUser):
 
 async def authenticate_user(db: AsyncSession, username: str, password: str):
     user = await get_user_by_username(db, username)
-    print(user)
     if not user:
         return None
     if not verify_password(password, user.password_hash):
         return None
+    return user
+
+
+async def appoint_admin(db: AsyncSession, admin: str, username: str):
+
+    # Check if a uses who's trying to appoint and admin an admin himself
+    stmt1 = select(models.User).filter(models.User.username == admin)
+    result = await db.execute(stmt1)
+    administrator = result.scalars().first()
+    if not administrator:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='Only chosen ones can appoint admins, you are not them ;)'
+        )
+
+    # Update is_admin field in DB
+    user = await get_user_by_username(db, username)
+    if not user:
+        return None
+    stmt2 = (
+        update(models.User)
+        .where(models.User.username == username)
+        .values(is_admin=True)
+    )
+    await db.execute(stmt2)
+    await db.commit()
+    await db.refresh(user)
     return user

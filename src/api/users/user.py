@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.users import crud
@@ -15,7 +15,8 @@ async def create_user(
     db_user = await crud.get_user_by_username(db, username=user.username)
     if db_user:
         raise HTTPException(
-            status_code=400, detail='Username already registered'
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Username already registered'
         )
     return await crud.create_user(db=db, user=user)
 
@@ -31,7 +32,26 @@ async def login(
     )
     if not user:
         raise HTTPException(
-            status_code=401, detail='Invalid username or password'
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Invalid username or password'
 
         )
-    return {'access_token': user.id, 'token_type': 'bearer'}
+    return {'message': 'You have been successfully logged in'}
+
+
+@router.patch('/')
+async def appoint_admin(
+    admin: str,
+    username: str,
+    db: AsyncSession = Depends(get_async_session)
+):
+    user = await crud.appoint_admin(db, admin=admin, username=username)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Invalid username or password'
+
+        )
+    return {
+        'message': f'{username} has been appointed as administrator'
+    }
