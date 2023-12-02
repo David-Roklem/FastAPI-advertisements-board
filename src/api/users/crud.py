@@ -38,11 +38,11 @@ async def authenticate_user(db: AsyncSession, username: str, password: str):
 
 async def appoint_admin(db: AsyncSession, admin: str, username: str):
 
-    # Check if a uses who's trying to appoint and admin an admin himself
+    # Check if a uses who's trying to appoint and admin is an admin himself
     stmt1 = select(models.User).filter(models.User.username == admin)
     result = await db.execute(stmt1)
     administrator = result.scalars().first()
-    if not administrator:
+    if administrator.is_admin is False:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='Only chosen ones can appoint admins, you are not them ;)'
