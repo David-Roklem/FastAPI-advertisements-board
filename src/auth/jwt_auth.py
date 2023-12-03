@@ -49,4 +49,5 @@ async def get_current_user(
     user = await get_user_by_username(db, token_data.username)
     if user is None:
         raise credentials_exception
+    print('useeeeeeeeeeeeeeeeeeeeeeeeer', user)
     return user

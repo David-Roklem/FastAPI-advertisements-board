@@ -9,9 +9,17 @@ from core import models
 
 
 async def get_user_by_username(db: AsyncSession, username: str):
-    stmt = select(models.User).filter(models.User.username == username)
+    stmt = select(models.User).where(models.User.username == username)
     result = await db.execute(stmt)
-    return result.scalars().first()
+    user = result.scalars().first()
+    await db.commit()
+    print('ussssssssssssssssssssssssseeeeeeeeeeeeeer', user.username, user.email, user.password_hash, user.is_admin)
+    return models.User(
+        username=user.username,
+        email=user.email,
+        password_hash=user.password_hash,
+        is_admin=user.is_admin
+    )
 
 
 async def create_user(db: AsyncSession, user: CreateUser):
@@ -42,6 +50,7 @@ async def appoint_admin(db: AsyncSession, admin: str, username: str):
     stmt1 = select(models.User).filter(models.User.username == admin)
     result = await db.execute(stmt1)
     administrator = result.scalars().first()
+    print('ADDDDDDDDDDDDDDDDDDDministrator', type(administrator), administrator.username)
     if administrator.is_admin is False:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
