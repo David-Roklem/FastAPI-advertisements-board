@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.ads.schemas import AdBase, CreateAd
+from api.ads.schemas import AdBase, AdTitle, CreateAd
 from api.ads import crud
 from auth.jwt_auth import get_current_user
 from core.db import get_async_session
@@ -30,7 +30,7 @@ async def show_current_user_ads(
     return user_ads
 
 
-@router.get('/all-ads/', response_model=list[AdBase])
+@router.get('/all-ads/', response_model=list[AdTitle])
 async def show_all_ads(
     db: AsyncSession = Depends(get_async_session)
 ):

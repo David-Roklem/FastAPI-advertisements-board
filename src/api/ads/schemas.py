@@ -16,3 +16,7 @@ class Ad(AdBase):
 
     id: UUID4
     user_id: UUID4
+
+
+class AdTitle(BaseModel):
+    title: str = Field(..., min_length=3, max_length=150)
