@@ -40,3 +40,17 @@ async def get_current_user_ads(
             detail='You don\'t have any published ads'
         )
     return ads
+
+
+async def get_all_ads(
+        db: AsyncSession,
+):
+    stmt = select(models.Ad)
+    result = await db.execute(stmt)
+    ads = result.scalars().all()
+    if not ads:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='There are no ads published yet. Be the one who starts it!'
+        )
+    return ads

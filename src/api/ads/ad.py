@@ -28,3 +28,11 @@ async def show_current_user_ads(
 ):
     user_ads = await crud.get_current_user_ads(db, current_user)
     return user_ads
+
+
+@router.get('/all-ads/', response_model=list[AdBase])
+async def show_all_ads(
+    db: AsyncSession = Depends(get_async_session)
+):
+    all_ads = await crud.get_all_ads(db)
+    return all_ads
