@@ -24,3 +24,19 @@ async def publish_ad(
     await db.commit()
     await db.refresh(db_ad)
     return db_ad
+
+
+async def get_current_user_ads(
+        db: AsyncSession,
+        current_user: User
+):
+    current_user_id = current_user.id
+    stmt = select(models.Ad).filter(models.Ad.user_id == current_user_id)
+    result = await db.execute(stmt)
+    ads = result.scalars().all()
+    if not ads:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='You don\'t have any published ads'
+        )
+    return ads

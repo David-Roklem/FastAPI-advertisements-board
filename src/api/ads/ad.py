@@ -19,3 +19,12 @@ async def create_ad(
 ):
     db_ad = await crud.publish_ad(db, ad, current_user)
     return db_ad
+
+
+@router.get('/your-ads/')
+async def show_current_user_ads(
+    current_user: Annotated[UserToken, Depends(get_current_user)],
+    db: AsyncSession = Depends(get_async_session)
+):
+    user_ads = await crud.get_current_user_ads(db, current_user)
+    return user_ads
