@@ -66,3 +66,27 @@ async def get_ad_in_details(db: AsyncSession, ad_number: int):
             detail='There is no such an ad under this ad number'
         )
     return ad
+
+
+async def remove_ad(
+        db: AsyncSession,
+        ad_number: int,
+        current_user: User
+):
+    current_user_id = current_user.id
+    stmt = select(models.Ad).where(models.Ad.ad_number == ad_number)
+    result = await db.execute(stmt)
+    db_ad = result.scalars().first()
+    if not db_ad:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='There is no such an ad under this ad number'
+        )
+    if current_user_id != db_ad.user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='You are allowed to delete only your own ads'
+        )
+    await db.delete(db_ad)
+    await db.commit()
+    return db_ad
