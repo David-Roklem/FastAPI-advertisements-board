@@ -1,9 +1,9 @@
 from uuid import uuid4
 
 from sqlalchemy.dialects.postgresql import UUID
-
+# from sqlalchemy import Sequence
 from sqlalchemy import String
-from sqlalchemy import BigInteger
+from sqlalchemy import BigInteger, func
 from sqlalchemy import Boolean
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped
@@ -69,9 +69,17 @@ class Ad(Base):
     description: Mapped[str]
     type: Mapped[str]
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    # ad_number: Mapped[int] = mapped_column(
+    #     BigInteger,
+    #     Sequence('ad_number_seq', start=55555),
+    #     server_default='ad_number_seq',
+    #     nullable=False,
+    #     unique=True,
+    #     index=True,
+    # )
     ad_number: Mapped[int] = mapped_column(
         BigInteger,
-        nullable=False,
+        default=func.abs(func.random() * 1000000),
         unique=True,
         index=True
     )

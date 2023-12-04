@@ -54,3 +54,15 @@ async def get_all_ads(
             detail='There are no ads published yet. Be the one who starts it!'
         )
     return ads
+
+
+async def get_ad_in_details(db: AsyncSession, ad_number: int):
+    stmt = select(models.Ad).where(models.Ad.ad_number == ad_number)
+    result = await db.execute(stmt)
+    ad = result.scalars().first()
+    if not ad:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='There is no such an ad under this ad number'
+        )
+    return ad

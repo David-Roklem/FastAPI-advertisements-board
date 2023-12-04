@@ -11,7 +11,7 @@ from api.users.schemas import UserToken
 router = APIRouter(prefix='/ads', tags=['Ads'])
 
 
-@router.post('/create-ad/')
+@router.post('/create-ad/', response_model=AdBase)
 async def create_ad(
     ad: CreateAd,
     current_user: Annotated[UserToken, Depends(get_current_user)],
@@ -21,7 +21,7 @@ async def create_ad(
     return db_ad
 
 
-@router.get('/your-ads/')
+@router.get('/your-ads/', response_model=list[AdTitle])
 async def show_current_user_ads(
     current_user: Annotated[UserToken, Depends(get_current_user)],
     db: AsyncSession = Depends(get_async_session)
@@ -35,4 +35,13 @@ async def show_all_ads(
     db: AsyncSession = Depends(get_async_session)
 ):
     all_ads = await crud.get_all_ads(db)
+    return all_ads
+
+
+@router.post('/ad-lookup/', response_model=AdBase)
+async def show_ad_in_details(
+    ad_number: int,
+    db: AsyncSession = Depends(get_async_session)
+):
+    all_ads = await crud.get_ad_in_details(db, ad_number)
     return all_ads

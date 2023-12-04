@@ -1,8 +1,8 @@
-"""initial commit
+"""Initial migration & Alter ad_number with random number bigint
 
-Revision ID: 1728a05a41d2
+Revision ID: 8858a46b855f
 Revises: 
-Create Date: 2023-12-01 09:05:29.484887
+Create Date: 2023-12-04 20:44:35.350160
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '1728a05a41d2'
+revision: str = '8858a46b855f'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -36,11 +36,13 @@ def upgrade() -> None:
     sa.Column('description', sa.String(), nullable=False),
     sa.Column('type', sa.String(), nullable=False),
     sa.Column('user_id', sa.UUID(), nullable=False),
+    sa.Column('ad_number', sa.BigInteger(), nullable=False),
     sa.Column('id', sa.UUID(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('id')
     )
+    op.create_index(op.f('ix_ads_ad_number'), 'ads', ['ad_number'], unique=True)
     op.create_table('comments',
     sa.Column('text', sa.String(), nullable=False),
     sa.Column('user_id', sa.UUID(), nullable=False),
@@ -79,6 +81,7 @@ def downgrade() -> None:
     op.drop_table('reviews')
     op.drop_table('complaints')
     op.drop_table('comments')
+    op.drop_index(op.f('ix_ads_ad_number'), table_name='ads')
     op.drop_table('ads')
     op.drop_table('users')
     # ### end Alembic commands ###

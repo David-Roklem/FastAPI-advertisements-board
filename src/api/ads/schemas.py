@@ -20,3 +20,4 @@ class Ad(AdBase):
 
 class AdTitle(BaseModel):
     title: str = Field(..., min_length=3, max_length=150)
+    ad_number: int
