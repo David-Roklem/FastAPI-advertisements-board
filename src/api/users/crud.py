@@ -16,6 +16,14 @@ async def get_user_by_username(db: AsyncSession, username: str):
     return user
 
 
+async def get_user_by_email(db: AsyncSession, email: str):
+    stmt = select(models.User).where(models.User.email == email)
+    result = await db.execute(stmt)
+    user = result.scalars().first()
+    await db.commit()
+    return user
+
+
 async def create_user(db: AsyncSession, user: CreateUser):
     hashed_password = get_password_hash(user.password)
     db_user = models.User(

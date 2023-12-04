@@ -20,10 +20,16 @@ async def create_user(
     user: CreateUser, db: AsyncSession = Depends(get_async_session)
 ):
     db_user = await crud.get_user_by_username(db, username=user.username)
+    db_email = await crud.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail='Username already registered'
+            detail='User with such a username already registered'
+        )
+    if db_email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='User with such an email already registered'
         )
     return await crud.create_user(db=db, user=user)
 
