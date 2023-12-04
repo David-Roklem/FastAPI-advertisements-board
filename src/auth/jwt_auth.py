@@ -11,7 +11,7 @@ from auth.token_schemas import TokenData
 from core.db import get_async_session
 from core.config import settings
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/users/token')
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
@@ -49,5 +49,4 @@ async def get_current_user(
     user = await get_user_by_username(db, token_data.username)
     if user is None:
         raise credentials_exception
-    print('useeeeeeeeeeeeeeeeeeeeeeeeer', user)
     return user

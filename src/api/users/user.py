@@ -9,13 +9,13 @@ from api.users.schemas import CreateUser
 from auth.jwt_auth import create_access_token, get_current_user
 from auth.token_schemas import Token
 from core.db import get_async_session
-from api.users.schemas import User
+from api.users.schemas import UserToken
 from core.config import settings
 
 router = APIRouter(prefix='/users', tags=['Users'])
 
 
-@router.post('/sign-up')
+@router.post('/sign-up/')
 async def create_user(
     user: CreateUser, db: AsyncSession = Depends(get_async_session)
 ):
@@ -28,25 +28,7 @@ async def create_user(
     return await crud.create_user(db=db, user=user)
 
 
-@router.post('/login/')
-async def login(
-    username: str,
-    password: str,
-    db: AsyncSession = Depends(get_async_session)
-):
-    user = await crud.authenticate_user(
-        db, username=username, password=password
-    )
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail='Invalid username or password'
-
-        )
-    return {'message': 'You have been successfully logged in'}
-
-###
-@router.post('/token', response_model=Token)
+@router.post('/token/', response_model=Token)
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: AsyncSession = Depends(get_async_session)
@@ -71,12 +53,12 @@ async def login_for_access_token(
     return {'access_token': access_token, 'token_type': 'bearer'}
 
 
-@router.get('/me/', response_model=User)
+@router.get('/me/', response_model=UserToken)
 async def read_users_me(
-    current_user: Annotated[User, Depends(get_current_user)]
+    current_user: Annotated[UserToken, Depends(get_current_user)]
 ):
     return current_user
-###
+
 
 @router.patch('/appoint-admin/')
 async def appoint_admin(

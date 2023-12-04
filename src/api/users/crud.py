@@ -13,13 +13,7 @@ async def get_user_by_username(db: AsyncSession, username: str):
     result = await db.execute(stmt)
     user = result.scalars().first()
     await db.commit()
-    print('ussssssssssssssssssssssssseeeeeeeeeeeeeer', user.username, user.email, user.password_hash, user.is_admin)
-    return models.User(
-        username=user.username,
-        email=user.email,
-        password_hash=user.password_hash,
-        is_admin=user.is_admin
-    )
+    return user
 
 
 async def create_user(db: AsyncSession, user: CreateUser):
@@ -46,11 +40,10 @@ async def authenticate_user(db: AsyncSession, username: str, password: str):
 
 async def appoint_admin(db: AsyncSession, admin: str, username: str):
 
-    # Check if a uses who's trying to appoint and admin is an admin himself
+    # Check if a user who's trying to appoint and admin is an admin himself
     stmt1 = select(models.User).filter(models.User.username == admin)
     result = await db.execute(stmt1)
     administrator = result.scalars().first()
-    print('ADDDDDDDDDDDDDDDDDDDministrator', type(administrator), administrator.username)
     if administrator.is_admin is False:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

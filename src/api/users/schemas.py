@@ -16,3 +16,8 @@ class User(UserBase):
 
     id: UUID4
     is_admin: bool = False
+
+
+class UserToken(BaseModel):
+    username: str = Field(..., min_length=3, max_length=50)
+    email: EmailStr = None
