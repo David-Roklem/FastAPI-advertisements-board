@@ -1,9 +1,9 @@
-import asyncio
 from uuid import uuid4
 
 from sqlalchemy.dialects.postgresql import UUID
 
 from sqlalchemy import String
+from sqlalchemy import BigInteger
 from sqlalchemy import Boolean
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped
@@ -11,8 +11,6 @@ from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import declared_attr
-
-from src.core.db import async_session_maker
 
 
 class Base(DeclarativeBase):
@@ -71,6 +69,12 @@ class Ad(Base):
     description: Mapped[str]
     type: Mapped[str]
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    ad_number: Mapped[int] = mapped_column(
+        BigInteger,
+        nullable=False,
+        unique=True,
+        index=True
+    )
 
     user: Mapped['User'] = relationship(back_populates='ads')
     comments: Mapped[list['Comment']] = relationship(
@@ -109,19 +113,3 @@ class Review(Base):
 
     user: Mapped['User'] = relationship(back_populates='reviews')
     ads: Mapped['Ad'] = relationship(back_populates='reviews')
-
-
-# async def insert_data_user():
-#     async with async_session_maker() as session:
-#         example_insertion_user = User(
-#             username='username',
-#             email='email',
-#             password_hash='password_hash',
-#             is_admin=True
-#         )
-
-#         session.add(example_insertion_user)
-#         await session.commit()
-
-
-# asyncio.run(insert_data_user())
