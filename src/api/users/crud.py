@@ -53,7 +53,7 @@ async def is_admin(db: AsyncSession, admin: User):
     if administrator.is_admin is False:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Only chosen ones can appoint admins, you are not them ;)'
+            detail='To make this action you must have admin rights ;)'
         )
     return True
 
