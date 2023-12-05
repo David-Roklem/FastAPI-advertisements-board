@@ -69,14 +69,6 @@ class Ad(Base):
     description: Mapped[str]
     type: Mapped[str]
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
-    # ad_number: Mapped[int] = mapped_column(
-    #     BigInteger,
-    #     Sequence('ad_number_seq', start=55555),
-    #     server_default='ad_number_seq',
-    #     nullable=False,
-    #     unique=True,
-    #     index=True,
-    # )
     ad_number: Mapped[int] = mapped_column(
         BigInteger,
         default=func.abs(func.random() * 1000000),
