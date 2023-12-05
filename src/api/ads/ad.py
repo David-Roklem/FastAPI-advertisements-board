@@ -21,26 +21,40 @@ async def create_ad(
     return db_ad
 
 
-@router.get('/all-your-ads/', response_model=list[AdTitle])
-async def show_current_user_ads(
+@router.get(
+        '/all-your-ads/',
+        response_model=list[AdTitle],
+        description='Options for "type_" field: "sell", "rent", "give away"'
+)
+async def show_all_current_user_ads(
     current_user: Annotated[UserToken, Depends(get_current_user)],
     db: AsyncSession = Depends(get_async_session),
     page: int = Query(1, gt=0),
-    page_size: int = Query(10, gt=0)
+    page_size: int = Query(10, gt=0),
+    type_: str = None,
 ):
     user_ads = await crud.get_current_user_ads(
-        page, page_size, db, current_user
+        type_,
+        page,
+        page_size,
+        db,
+        current_user
     )
     return user_ads
 
 
-@router.get('/all-ads/', response_model=list[AdTitle])
+@router.get(
+        '/all-ads/',
+        response_model=list[AdTitle],
+        description='Options for "type_" field: "sell", "rent", "give away"'
+)
 async def show_all_ads(
+    type_: str = None,
     page: int = Query(1, gt=0),
     page_size: int = Query(10, gt=0),
     db: AsyncSession = Depends(get_async_session)
 ):
-    all_ads = await crud.get_all_ads(page, page_size, db)
+    all_ads = await crud.get_all_ads(type_, page, page_size, db)
     return all_ads
 
 

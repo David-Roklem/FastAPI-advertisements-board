@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 
-from sqlalchemy import select
+from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from api.users.schemas import User
 
@@ -27,29 +27,45 @@ async def publish_ad(
 
 
 async def get_current_user_ads(
+        type: str,
         page: int,
         page_size: int,
         db: AsyncSession,
         current_user: User
 ):
     current_user_id = current_user.id
-    stmt = select(models.Ad).filter(models.Ad.user_id == current_user_id)
+    if type:
+        stmt = (
+            select(models.Ad)
+            .filter(
+                and_(
+                    models.Ad.user_id == current_user_id,
+                    models.Ad.type == type
+                )
+            )
+        )
+    else:
+        stmt = select(models.Ad).filter(models.Ad.user_id == current_user_id)
     result = await db.execute(stmt)
     ads = result.scalars().all()
     if not ads:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail='You don\'t have any published ads'
+            detail='No ads have been found'
         )
     return ads[(page-1)*page_size:page_size*page]
 
 
 async def get_all_ads(
+        type: str,
         page: int,
         page_size: int,
         db: AsyncSession,
 ):
-    stmt = select(models.Ad)
+    if type:
+        stmt = select(models.Ad).filter(models.Ad.type == type)
+    else:
+        stmt = select(models.Ad)
     result = await db.execute(stmt)
     ads = result.scalars().all()
     if not ads:
