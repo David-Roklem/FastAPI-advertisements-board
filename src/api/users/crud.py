@@ -50,26 +50,24 @@ async def is_admin(db: AsyncSession, admin: User):
     stmt1 = select(models.User).filter(models.User.username == admin.username)
     result = await db.execute(stmt1)
     administrator = result.scalars().first()
-    if administrator.is_admin is False:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='To make this action you must have admin rights ;)'
-        )
-    return True
+    return administrator.is_admin
 
 
 async def assign_admin(db: AsyncSession, admin: User, username: str):
-    if await is_admin(db, admin):
-        user = await get_user_by_username(db, username)
-        if not user:
-            return None
-        stmt2 = (
-            update(models.User)
-            .where(models.User.username == username)
-            .values(is_admin=True)
+    if not await is_admin(db, admin):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='Only admins can assign other admins ;)'
         )
-        await db.execute(stmt2)
-        await db.commit()
-        await db.refresh(user)
-        return user
-    return False
+    user = await get_user_by_username(db, username)
+    if not user:
+        return None
+    stmt2 = (
+        update(models.User)
+        .where(models.User.username == username)
+        .values(is_admin=True)
+    )
+    await db.execute(stmt2)
+    await db.commit()
+    await db.refresh(user)
+    return user
