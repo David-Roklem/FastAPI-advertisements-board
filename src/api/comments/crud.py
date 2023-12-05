@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 
-from sqlalchemy import select
+from sqlalchemy import UUID, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from api.ads.crud import get_ad_in_details
 from api.comments.schemas import CommentBase
@@ -29,3 +29,21 @@ async def publish_comment(
     await db.commit()
     await db.refresh(db_comment)
     return db_comment
+
+
+async def remove_comment_by_admin(
+        db: AsyncSession,
+        comment_id: UUID
+):
+    stmt = select(models.Comment).where(models.Comment.id == comment_id)
+    result = await db.execute(stmt)
+    db_comment = result.scalars().first()
+    if not db_comment:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='There is no comment with such an id in database'
+        )
+    comment_text = db_comment.text
+    await db.delete(db_comment)
+    await db.commit()
+    return comment_text

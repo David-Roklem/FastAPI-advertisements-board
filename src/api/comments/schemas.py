@@ -5,7 +5,7 @@ class CommentBase(BaseModel):
     text: str
 
 
-class CreateComment(CommentBase):
+class CommentResponse(CommentBase):
     message: str
 
 
