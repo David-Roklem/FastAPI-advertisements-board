@@ -68,16 +68,15 @@ async def read_users_me(
 
 @router.patch('/appoint-admin/')
 async def appoint_admin(
-    admin: str,
+    current_user: Annotated[UserToken, Depends(get_current_user)],
     username: str,
     db: AsyncSession = Depends(get_async_session)
 ):
-    user = await crud.appoint_admin(db, admin=admin, username=username)
+    user = await crud.assign_admin(db, admin=current_user, username=username)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='Invalid username or password'
-
         )
     return {
         'message': f'{username} has been appointed as administrator'

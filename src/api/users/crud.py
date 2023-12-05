@@ -4,7 +4,7 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.hash_password import get_password_hash, verify_password
 
-from api.users.schemas import CreateUser
+from api.users.schemas import CreateUser, User
 from core import models
 
 
@@ -46,10 +46,8 @@ async def authenticate_user(db: AsyncSession, username: str, password: str):
     return user
 
 
-async def appoint_admin(db: AsyncSession, admin: str, username: str):
-
-    # Check if a user who's trying to appoint and admin is an admin himself
-    stmt1 = select(models.User).filter(models.User.username == admin)
+async def is_admin(db: AsyncSession, admin: User):
+    stmt1 = select(models.User).filter(models.User.username == admin.username)
     result = await db.execute(stmt1)
     administrator = result.scalars().first()
     if administrator.is_admin is False:
@@ -57,17 +55,21 @@ async def appoint_admin(db: AsyncSession, admin: str, username: str):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='Only chosen ones can appoint admins, you are not them ;)'
         )
+    return True
 
-    # Update is_admin field in DB
-    user = await get_user_by_username(db, username)
-    if not user:
-        return None
-    stmt2 = (
-        update(models.User)
-        .where(models.User.username == username)
-        .values(is_admin=True)
-    )
-    await db.execute(stmt2)
-    await db.commit()
-    await db.refresh(user)
-    return user
+
+async def assign_admin(db: AsyncSession, admin: User, username: str):
+    if await is_admin(db, admin):
+        user = await get_user_by_username(db, username)
+        if not user:
+            return None
+        stmt2 = (
+            update(models.User)
+            .where(models.User.username == username)
+            .values(is_admin=True)
+        )
+        await db.execute(stmt2)
+        await db.commit()
+        await db.refresh(user)
+        return user
+    return False
