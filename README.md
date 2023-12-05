@@ -1,5 +1,5 @@
 # Test-task-Productivity-Inside
-This test task is dedicated to a service which utilizes FastAPI framework for advertisements board development
+This test task is dedicated to a service which utilizes FastAPI framework for advertisements board development. It uses SQLalchemy as ORM which wraps PostgreSQL. As a migration tool Alembic is presented.
 
 ## Getting Started
 You can clone this repository by using terminal command:
