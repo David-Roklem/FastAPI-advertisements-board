@@ -79,12 +79,15 @@ class Ad(Base):
     user: Mapped['User'] = relationship(back_populates='ads')
     comments: Mapped[list['Comment']] = relationship(
         back_populates='ads',
+        cascade='all, delete'
     )
     complaints: Mapped[list['Complaint']] = relationship(
         back_populates='ads',
+        cascade='all, delete'
     )
     reviews: Mapped[list['Review']] = relationship(
         back_populates='ads',
+        cascade='all, delete'
     )
 
 
