@@ -27,5 +27,5 @@ async def create_comment(
     )
     return CreateComment(
         text=db_comment.text,
-        message='Your comment was successfully published@'
+        message='Your comment was successfully published'
     )
