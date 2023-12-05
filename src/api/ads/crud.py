@@ -27,6 +27,8 @@ async def publish_ad(
 
 
 async def get_current_user_ads(
+        page: int,
+        page_size: int,
         db: AsyncSession,
         current_user: User
 ):
@@ -39,10 +41,12 @@ async def get_current_user_ads(
             status_code=status.HTTP_404_NOT_FOUND,
             detail='You don\'t have any published ads'
         )
-    return ads
+    return ads[(page-1)*page_size:page_size*page]
 
 
 async def get_all_ads(
+        page: int,
+        page_size: int,
         db: AsyncSession,
 ):
     stmt = select(models.Ad)
@@ -53,7 +57,7 @@ async def get_all_ads(
             status_code=status.HTTP_404_NOT_FOUND,
             detail='There are no ads published yet. Be the one who starts it!'
         )
-    return ads
+    return ads[(page-1)*page_size:page_size*page]
 
 
 async def get_ad_in_details(db: AsyncSession, ad_number: int):

@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.ads.schemas import AdBase, AdTitle, CreateAd, AdDelete
@@ -21,20 +21,26 @@ async def create_ad(
     return db_ad
 
 
-@router.get('/your-ads/', response_model=list[AdTitle])
+@router.get('/all-your-ads/', response_model=list[AdTitle])
 async def show_current_user_ads(
     current_user: Annotated[UserToken, Depends(get_current_user)],
-    db: AsyncSession = Depends(get_async_session)
+    db: AsyncSession = Depends(get_async_session),
+    page: int = Query(1, gt=0),
+    page_size: int = Query(10, gt=0)
 ):
-    user_ads = await crud.get_current_user_ads(db, current_user)
+    user_ads = await crud.get_current_user_ads(
+        page, page_size, db, current_user
+    )
     return user_ads
 
 
 @router.get('/all-ads/', response_model=list[AdTitle])
 async def show_all_ads(
+    page: int = Query(1, gt=0),
+    page_size: int = Query(10, gt=0),
     db: AsyncSession = Depends(get_async_session)
 ):
-    all_ads = await crud.get_all_ads(db)
+    all_ads = await crud.get_all_ads(page, page_size, db)
     return all_ads
 
 
