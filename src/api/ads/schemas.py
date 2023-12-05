@@ -18,6 +18,12 @@ class Ad(AdBase):
     user_id: UUID4
 
 
+class AdDelete(BaseModel):
+    message: str
+    title: str = Field(..., min_length=3, max_length=150)
+    ad_number: int
+
+
 class AdTitle(BaseModel):
     title: str = Field(..., min_length=3, max_length=150)
     ad_number: int

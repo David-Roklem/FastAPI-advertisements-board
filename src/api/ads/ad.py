@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.ads.schemas import AdBase, AdTitle, CreateAd
+from api.ads.schemas import AdBase, AdTitle, CreateAd, AdDelete
 from api.ads import crud
 from auth.jwt_auth import get_current_user
 from core.db import get_async_session
@@ -38,7 +38,7 @@ async def show_all_ads(
     return all_ads
 
 
-@router.post('/ad-lookup/', response_model=AdBase)
+@router.post('/ad-lookup/', response_model=AdTitle)
 async def show_ad_in_details(
     ad_number: int,
     db: AsyncSession = Depends(get_async_session),
@@ -47,11 +47,15 @@ async def show_ad_in_details(
     return all_ads
 
 
-@router.post('/delete-ad/', response_model=AdTitle)
+@router.post('/delete-ad/', response_model=AdDelete)
 async def delete_ad(
     ad_number: int,
     current_user: Annotated[UserToken, Depends(get_current_user)],
     db: AsyncSession = Depends(get_async_session)
 ):
     deleted_ad = await crud.remove_ad(db, ad_number, current_user)
-    return deleted_ad
+    return AdDelete(
+        message='The ad successfully deleted',
+        title=deleted_ad.title,
+        ad_number=deleted_ad.ad_number
+    )
