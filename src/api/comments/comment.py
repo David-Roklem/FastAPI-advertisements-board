@@ -35,7 +35,7 @@ async def create_comment(
     )
 
 
-@router.post('/delete-comment/', response_model=CommentResponse)
+@router.delete('/delete-comment/', response_model=CommentResponse)
 async def delete_comment_by_admin(
     comment_id: UUID4,
     current_user: Annotated[UserToken, Depends(get_current_user)],

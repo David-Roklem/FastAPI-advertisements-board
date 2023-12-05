@@ -38,7 +38,7 @@ async def show_all_ads(
     return all_ads
 
 
-@router.post('/ad-lookup/', response_model=AdTitle)
+@router.get('/ad-lookup/', response_model=AdTitle)
 async def show_ad_in_details(
     ad_number: int,
     db: AsyncSession = Depends(get_async_session),
@@ -47,7 +47,7 @@ async def show_ad_in_details(
     return all_ads
 
 
-@router.post('/delete-ad/', response_model=AdDelete)
+@router.delete('/delete-ad/', response_model=AdDelete)
 async def delete_ad(
     ad_number: int,
     current_user: Annotated[UserToken, Depends(get_current_user)],
