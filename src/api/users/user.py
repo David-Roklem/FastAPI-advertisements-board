@@ -15,7 +15,7 @@ from core.config import settings
 router = APIRouter(prefix='/users', tags=['Users'])
 
 
-@router.post('/sign-up/')
+@router.post('/sign-up/', status_code=201)
 async def create_user(
     user: CreateUser, db: AsyncSession = Depends(get_async_session)
 ):
