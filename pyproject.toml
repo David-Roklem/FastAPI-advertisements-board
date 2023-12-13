@@ -26,6 +26,8 @@ asyncio_mode = "auto"
 pythonpath = "src/"
 testpaths = "tests/"
 
+[tool.black]
+line-length = 80
 
 [build-system]
 requires = ["poetry-core"]
