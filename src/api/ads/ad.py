@@ -63,8 +63,8 @@ async def show_ad_in_details(
     ad_number: int,
     db: AsyncSession = Depends(get_async_session),
 ):
-    all_ads = await crud.get_ad_in_details(db, ad_number)
-    return all_ads
+    ad = await crud.get_ad_in_details(db, ad_number)
+    return ad
 
 
 @router.delete('/delete-ad/', response_model=AdDelete)
