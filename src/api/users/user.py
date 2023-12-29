@@ -31,7 +31,8 @@ async def create_user(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User with such an email already registered'
         )
-    return await crud.create_user(db=db, user=user)
+    db_user = await crud.create_user(db=db, user=user)
+    return {'message': 'You have been successfully signed up'}
 
 
 @router.post('/token/', response_model=Token)
