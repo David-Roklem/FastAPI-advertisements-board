@@ -28,7 +28,7 @@ pip install -r requirements.txt
 The code base is adapted for utilizing PostgreSQL. If you wish to use another database, you will need to rewrite code in order to satisfy new requirements (provide correct DSN format in config.py).
 
 ### Executing program
-As this project uses [https://pypi.org/project/python-dotenv/](python-dotenv) library, first of all you need to configure your .env with the following variables:
+As this project uses [python-dotenv](https://pypi.org/project/python-dotenv/) library, first of all you need to configure your .env with the following variables:
 ```
 DB_NAME=''
 DB_USER=''
